@@ -1,0 +1,21 @@
+---
+- name: This is only a test
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    sat_org: "satsrv01"
+    sat_org: "MyOrg"
+    sat_hc: "MyHC"
+    sat_hosts:
+      - plasrv01.local
+      - pldsrv01.local
+      - plusrv01.local
+
+  tasks:
+    - name: Hello World
+      ansible.builtin.debug:
+        msg: "Hello World! #{{ item }}"
+      with_items:
+        - "{{ sat_hosts }}"
