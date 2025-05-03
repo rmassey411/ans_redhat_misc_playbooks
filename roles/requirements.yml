@@ -1,0 +1,5 @@
+---
+roles:
+# Added for Satellite tasks
+ - src: git+https://github.com/rmassey411/ans_redhat_satellite_role.git
+   scm: git
