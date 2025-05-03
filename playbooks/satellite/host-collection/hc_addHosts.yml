@@ -1,0 +1,20 @@
+---
+- name: Add hosts to host-collection
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    sat_org: "MyOrg"
+    sat_hc: "JobFailures_Patching_20250427"
+    sat_hosts:
+      - plasrv01.local
+      - pldsrv01.local
+      - plusrv01.local
+
+  tasks:
+    - name: Add hosts to host-collection
+      ansible.builtin.shell:
+        cmd: "hammer host-collection add-host --hosts {{ item }} --organization {{ sat_org }} --name {{ sat_hc }}"
+      with_items:
+        - "{{ sat_hosts }}"
