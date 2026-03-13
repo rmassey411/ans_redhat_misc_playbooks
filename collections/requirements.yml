@@ -1,4 +1,4 @@
 ---
 collections:
-- name: redhat.satellite
+# - name: redhat.satellite
 - name: infra.ee_utilities
