@@ -1,0 +1,59 @@
+---
+- name: Playbook to create custom EE
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - infra.ee_utilities
+
+  vars:
+    # For controller configuration definition
+    ee_builder_dir_clean: false
+    ee_builder_dir: "."
+    ee_update_base_images: false
+    ee_reg_credential: Automation Hub Container Registry
+    ee_base_image: registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel9:latest
+    ee_pull_collections_from_hub: true
+    ah_host: "{{ my_ah_host }}"
+    ah_token: "{{ my_ah_token }}"
+    ee_registry_dest: "{{ my_registry_dest }}"
+    ee_registry_username: "{{ my_registry_username }}"
+    ee_registry_password: "{{ my_registry_userpass }}"
+    ee_verbosity: 1
+    ee_squash: new
+    ee_list:
+      - name: "{{ my_ee_name }}"
+        alt_name: Custom EE
+        tags:
+          - 1-11-21-2
+        dependencies:
+          system:
+          - python-requests
+          - python-pyyaml
+          python:
+            - pytz  # for schedule_rrule lookup plugin
+            - python-dateutil>=2.7.0  # schedule_rrule
+            - awxkit  # For import and export modules
+          galaxy:
+            collections:
+              - name: awx.awx
+                version: 22.4.0
+              - infra.controller_configuration
+              - ansible.controller
+              - infra.ah_configuration
+        build_items:
+          - files/
+          - test.yml
+        build_files:
+          - src: files/stuff.txt
+            dest: folders
+          - src: test.yml
+            dest: folders
+        build_steps:
+          prepend_final:
+            - ADD _build/folders/stuff.txt /etc/ansible/stuff.txt
+            - ADD _build/folders/test.yml /etc/ansible/test.yml
+          append_final:
+            - RUN echo This is a post-install command!
+
+  roles:
+    - infra.ee_utilities.ee_builder
