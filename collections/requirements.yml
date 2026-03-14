@@ -2,3 +2,4 @@
 collections:
 # - name: redhat.satellite
 - name: infra.ee_utilities
+- name: containers.podman
