@@ -11,7 +11,7 @@
     ee_builder_dir: "."
     ee_update_base_images: false
     ee_reg_credential: Automation Hub Container Registry
-    ee_base_image: registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel9:latest
+    ee_base_image: registry.redhat.io/ansible-automation-platform-25/ee-minimal-rhel8:latest
     ee_pull_collections_from_hub: true
     ah_host: "{{ my_ah_host }}"
     ah_token: "{{ my_ah_token }}"
