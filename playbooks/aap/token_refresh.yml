@@ -1,8 +1,8 @@
 ---
-- name: This is only a test
+- name: Refresh Token for Automation Hub
   hosts: localhost
   connection: local
-  gather_facts: true
+  gather_facts: false
 
   vars:
     sat_org: "satsrv01"
@@ -14,8 +14,9 @@
       - plusrv01.local
 
   tasks:
-    - name: Hello World
+    - name: Print token
       ansible.builtin.debug:
-        msg: "Hello World! #{{ item }}"
-      with_items:
-        - "{{ sat_hosts }}"
+        msg: |
+          "This is my token:"
+          "{{ console_token }}"
+
