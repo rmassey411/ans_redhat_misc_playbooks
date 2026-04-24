@@ -4,19 +4,36 @@
   connection: local
   gather_facts: false
 
-  vars:
-    sat_org: "satsrv01"
-    sat_org: "MyOrg"
-    sat_hc: "MyHC"
-    sat_hosts:
-      - plasrv01.local
-      - pldsrv01.local
-      - plusrv01.local
+# Shamelessly adapted from refresh_rh_token.yml https://github.com/BBGrimmett2/AAP-Utils
 
   tasks:
-    - name: Print token
-      ansible.builtin.debug:
-        msg: |
-          "This is my token:"
-          "{{ generic_token }}"
+    - name: Check that the token variable is set
+      ansible.builtin.assert:
+        that:
+          - generic_token is not none
+          - generic_token != ""
+        fail_msg: "The 'user_token' variable must be provided and cannot be empty."
 
+    - name: Refresh the API token using Red Hat SSO endpoint
+      ansible.builtin.uri:
+        url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+        method: POST
+        body_format: form-urlencoded
+        body:
+          grant_type: refresh_token
+          client_id: cloud-services
+          refresh_token: "{{ generic_token }}"
+        return_content: false
+        status_code: 200
+      register: refresh_result
+      changed_when: false
+      failed_when: false
+
+    - name: Verify Red Hat SSO token refresh was successful
+      ansible.builtin.assert:
+        that:
+          - refresh_result.status == 200
+          - refresh_result.json is defined
+          - refresh_result.json.access_token is defined
+        fail_msg: "Red Hat SSO token refresh failed or returned an invalid response"
+        success_msg: "Red Hat SSO token refresh succeeded"
